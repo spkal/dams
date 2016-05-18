@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
 ```
 
 ## Get the Data
@@ -25,6 +26,17 @@ names(dams_all)
 ## Initial View of the Data
 ```{r explore01}
 summary(dams_all)
+```
+
+## Missing values
+```{r missing}
+missingCount <- sapply(dams_all, function(x) sum(is.na(x)))
+missingCount <- missingCount[missingCount > 0]
+o <- order(-missingCount)
+missingCount <- missingCount[o]
+pltMissing <- ggplot(data.frame(Var=names(missingCount), NMissing=missingCount),
+    aes(Var, NMissing)) + geom_bar(stat = "identity")
+pltMissing
 ```
 
 What kinds of dams?

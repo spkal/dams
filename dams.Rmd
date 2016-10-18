@@ -7,8 +7,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(ggplot2)
-library(dplyr)
+library("ggplot2")
+library("dplyr")
+library("leaflet")
 ```
 
 ## Get the Data
@@ -17,7 +18,7 @@ Use the `dams` package from CRAN to download all the NID data.
 if(file.exists("dams_all.Rds")) {
   dams_all <- readRDS("dams_all.Rds")
 } else {
-  library(dams)
+  library("dams")
   dams_all <- extract_nid(sample_only = FALSE)
 }
 dim(dams_all)
@@ -47,4 +48,12 @@ What kinds of dams?
 with(dams_all, table(Dam_Type))
 with(dams_all, table(Core))
 with(dams_all, table(Foundation))
+```
+
+Dam locations
+```{r}
+dams_all %>%
+    leaflet() %>%
+    addTiles() %>%
+    addCircles(weight = 1, radius = dams_all$Dam_Height)
 ```

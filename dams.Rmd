@@ -16,7 +16,7 @@ library("leaflet")
 Use the `dams` package from CRAN to download all the NID data.
 ```{r getdata}
 if(file.exists("dams_all.rds")) {
-  dams_all <- readRDS("dams_all.Rds")
+  dams_all <- readRDS("dams_all.rds")
 } else {
   library("dams")
   dams_all <- get_nid()

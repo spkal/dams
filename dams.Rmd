@@ -26,12 +26,17 @@ dim(dams_all)
 names(dams_all)
 ```
 
+```{r lower48}
+dams_all <- dams_all %>%
+  filter(State != "GU", State != "PR", State != "AK", State != "HI")
+```
+
 ## Initial View of the Data
 ```{r explore01}
 summary(dams_all)
 ```
 
-## Missing values
+## Missing Values
 ```{r missing}
 missingCount <- sapply(dams_all, function(x) sum(is.na(x)))
 missingCount <- missingCount[missingCount > 0]
@@ -44,17 +49,40 @@ data.frame(Variable = factor(names(missingCount), levels=names(missingCount)),
 	     coord_flip()
 ```
 
-What kinds of dams?
+### Types of Dams
 ```{r}
 with(dams_all, table(Dam_Type))
 with(dams_all, table(Core))
 with(dams_all, table(Foundation))
 ```
 
-Dam locations
-```{r}
+### Dam Locations
+```{r eval=TRUE}
 dams_all %>%
     leaflet() %>%
     addTiles() %>%
     addCircles(weight = 1, radius = dams_all$Dam_Height)
+```
+
+### Dam Area
+Folsom dam is clearly an outlier.
+Data says length is 102000 but Wikipedia has the overall length at 26730.
+```{r area}
+dams_all <- dams_all %>%
+  mutate(Dam_Area = Dam_Length * Dam_Height)
+ggplot(dams_all, aes(x=Dam_Area)) + geom_histogram()
+```
+
+### Rivers
+```{r rivers}
+sort(with(dams_all, 
+    table(River)), decreasing = TRUE)[1:100]
+```
+
+### Big Dams
+```{r big}
+dams_all %>%
+  filter(Dam_Height > 100) %>%
+  # ggplot(aes(x=Dam_Height)) + geom_histogram()
+  dim()
 ```
